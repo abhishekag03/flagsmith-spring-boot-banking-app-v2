@@ -71,7 +71,13 @@ public class FlagsmithSpringBootBankingAppApplication {
 
     // endpoint to get the current interest rate
     @GetMapping("/interest-rate")
-    public ResponseEntity<Object> getInterestRate() {
+    public ResponseEntity<Object> getInterestRate() throws FlagsmithClientError {
+        Flags flags = flagsmithClient.getEnvironmentFlags();
+        String featureName = "interest_rate";
+        Object intRate = flags.getFeatureValue(featureName);
+        if (intRate != "") {
+            return ResponseEntity.ok(intRate);
+        }
         return ResponseEntity.ok(defaultInterestRate);
     }
 }
